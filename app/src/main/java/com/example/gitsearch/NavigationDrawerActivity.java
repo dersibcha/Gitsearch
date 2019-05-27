@@ -2,6 +2,7 @@ package com.example.gitsearch;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
@@ -16,7 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.gitsearch.Commons.GlobalVariables;
 
 public class NavigationDrawerActivity extends AppCompatActivity
@@ -70,7 +74,20 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        SharedPreferences informacion = getApplicationContext().getSharedPreferences(GlobalVariables.Information, MODE_PRIVATE);
+        String name = informacion.getString(GlobalVariables.name, "None");
+        String email = informacion.getString(GlobalVariables.email, "None");
+        String photo = informacion.getString(GlobalVariables.photo, String.valueOf(0));
+
+        TextView txtName = (TextView) findViewById(R.id.tvName);
+        txtName.setText(name);
+        TextView txtEmail = (TextView) findViewById(R.id.tvEmail);
+        txtEmail.setText(email);
+        ImageView imgPhoto = (ImageView) findViewById(R.id.ivProfilepic);
+        //cargar url de imagen
+        Glide.with(getApplicationContext())
+                .load(photo)
+                .into(imgPhoto);
         getMenuInflater().inflate(R.menu.navigation_drawer, menu);
         return true;
     }

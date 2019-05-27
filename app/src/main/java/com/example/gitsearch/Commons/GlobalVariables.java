@@ -5,9 +5,9 @@ package com.example.gitsearch.Commons;
 public class GlobalVariables {
 
 
-    public static String Client_ID = "005a82bdb85177d3f0aa";
-    public static String Client_Secret = "3c28c1377d207fbdd8b4f9b5d4b2d2589f4d4483";
-    public static String Callback_URL = "https://github.com/AndreyArguedas/GithubCompare";
+    public static String Client_ID = "a642967db0eba9d782b3";
+    public static String Client_Secret = "399823b37acdb583d4b2466c3d158d514aa361fd";
+    public static String Callback_URL = "https://github.com/dersibcha/Gitsearch.git";
     public static String Callback_Logout = "https://developer.github.com/v3/";
     public static String Github_OAuth_URL = "https://github.com/login/oauth/authorize";
     public static String Github_OAuth_Logout = "https://github.com/logout";
@@ -34,7 +34,8 @@ public class GlobalVariables {
     public static String name = "name";
     public static String email = "email";
     public static String photo = "photo";
-    public static String company = "";
+    public static String repos = "repos";
+    public static String nameexact = "nameexact";
     public static String Information = "information";
     public static String NULL_String_Value = "null";
     public static String Token_NULL = "Token Null";
@@ -66,5 +67,7 @@ public class GlobalVariables {
     public static String userNameCurrent = "testUser";
     public static String gitUserCurrent = "testGit";
     public static String emailCurrent = "test@email.com";
+
+    public static String uriRep = "";
 
 }

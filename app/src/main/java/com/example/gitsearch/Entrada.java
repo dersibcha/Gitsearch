@@ -70,6 +70,7 @@ public class Entrada extends AppCompatActivity {
                     if (!task.isSuccessful()) {
                         Utils.Message(getText(R.string.authError).toString(), Entrada.this);
                     } else {
+                        FirebaseServices.getInstance().getUserData(getApplicationContext(), mDatabase);
                         FirebaseUser currentUser = mAuth.getCurrentUser();
                         updateUI(currentUser);
                     }
@@ -107,9 +108,9 @@ public class Entrada extends AppCompatActivity {
                 switch (v.getId()) {
 
                     case R.id.btnLogIn:
-
+                        GlobalVariables.session_user = true;
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(GlobalVariables.Github_OAuth_URL +
-                                "?client_id=" + GlobalVariables.Client_ID + "&redirect_uri="));
+                                "?client_id=" + GlobalVariables.Client_ID + "&redirect_uri="+GlobalVariables.Callback_URL));
                         startActivity(intent);
 
                         break;
@@ -127,9 +128,9 @@ public class Entrada extends AppCompatActivity {
         super.onResume();
         Uri uri = getIntent().getData();
 
-        if (uri != null && uri.toString().startsWith(GlobalVariables.Callback_URL)) {
+        if (uri != null && uri.toString().startsWith(GlobalVariables.Callback_URL)&& !GlobalVariables.uriRep.equals(uri.getPath())) {
             //Utils.Message(getText(R.string.loading).toString(), getApplicationContext());
-
+            GlobalVariables.uriRep = uri.getPath();
             String code = uri.getQueryParameter(GlobalVariables.Github_Code); // Code client Secret
 
             Retrofit retro = API_Builder.getInstance().getBuilderRetroAPI(GlobalVariables.Github_URL);
@@ -144,7 +145,7 @@ public class Entrada extends AppCompatActivity {
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
                     accessToken = response.body();
                     API_Builder.setAccestoken(accessToken);
-                    Utils.Message(getText(R.string.successfulConnection).toString(), getApplicationContext());
+                    //Utils.Message(getText(R.string.successfulConnection).toString(), getApplicationContext());
 
                     //Para guardar el token del usuario que ingreso
                     SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences(GlobalVariables.Token, MODE_PRIVATE).edit();
@@ -155,7 +156,7 @@ public class Entrada extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<AccessToken> call, Throwable t) {
-                    Utils.Message(getText(R.string.connectingError).toString(), getApplicationContext());
+                 //   Utils.Message(getText(R.string.connectingError).toString(), getApplicationContext());
                 }
             });
         }

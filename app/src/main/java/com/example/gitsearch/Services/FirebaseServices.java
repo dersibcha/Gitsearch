@@ -54,18 +54,21 @@ public class FirebaseServices {
 
     public void authenticateGitHub(final String token, final Context context, final DatabaseReference mDatabase) {
         mAuth = FirebaseAuth.getInstance();
-        AuthCredential credential = GithubAuthProvider.getCredential(token);
-        mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
-                    Utils.Message(context.getText(R.string.authError).toString(), context);
-                } else {
-                    getUserData(context, mDatabase);
-
-                }
+        if(token!=null) {
+            if (!token.isEmpty()) {
+                AuthCredential credential = GithubAuthProvider.getCredential(token);
+                mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (!task.isSuccessful()) {
+                            Utils.Message(context.getText(R.string.authError).toString(), context);
+                        } else {
+                            getUserData(context, mDatabase);
+                        }
+                    }
+                });
             }
-        });
+        }
     }
 
     public void getUserData(final Context context, final DatabaseReference mDatabase) {
@@ -105,12 +108,13 @@ public class FirebaseServices {
             public void onResponse(Call<GithubUser> call, Response<GithubUser> response) {
                 GithubUser userInfo = response.body();
                 if (userInfo != null) {
-                    writeNewUser(user, userInfo.getEmail(), mDatabase);
+                    writeNewUser(user, userInfo.getEmail(),userInfo.getAvatar_url(), mDatabase);
                     SharedPreferences.Editor informacion = context.getSharedPreferences(GlobalVariables.Information, MODE_PRIVATE).edit();
                     informacion.putString(GlobalVariables.name, user);
                     informacion.putString(GlobalVariables.email, userInfo.getEmail());
                     informacion.putString(GlobalVariables.photo, userInfo.getAvatar_url());
-                    informacion.putBoolean(GlobalVariables.company, GlobalVariables.session_company);
+                    informacion.putString(GlobalVariables.repos, userInfo.getRepos_url());
+                    informacion.putString(GlobalVariables.nameexact, userInfo.getName());
                     informacion.commit();
                     Intent intent = new Intent(context, NavigationDrawerActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -127,13 +131,13 @@ public class FirebaseServices {
         });
     }
 
-    public void writeNewUser(String name, String email, DatabaseReference mDatabase) {
-        DatabaseUser user = new DatabaseUser(name, email, GlobalVariables.session_company, GlobalVariables.session_user, false);
+    public void writeNewUser(String name, String email,String profilepic, DatabaseReference mDatabase) {
+        DatabaseUser user = new DatabaseUser(name, email,profilepic, GlobalVariables.session_user, false,0,0);
         mDatabase.child("users").child(name).setValue(user);
     }
 
-    public void writeNewUser(String displayname, String name, String email, DatabaseReference mDatabase) {
-        DatabaseUser user = new DatabaseUser(displayname, email, true, false, false);
+    public void writeNewUser(String displayname, String name, String email,String profilepic, DatabaseReference mDatabase) {
+        DatabaseUser user = new DatabaseUser(displayname, email, profilepic,true, false, 0,0);
         mDatabase.child("users").child(name).setValue(user);
     }
 

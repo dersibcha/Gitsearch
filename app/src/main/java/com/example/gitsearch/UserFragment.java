@@ -1,6 +1,7 @@
 package com.example.gitsearch;
 
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.example.gitsearch.Commons.GlobalVariables;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -33,14 +39,24 @@ public class UserFragment extends ClaseGlobalFragments {
         final ImageView ivUser = (ImageView) view.findViewById(R.id.ivUser);
 
 
-        tvUserName.setText(getUserName());
-        tvGitUser.setText(getGitUser());
-        tvEmail.setText(getEmail());
-        Bitmap bitmap = getUserPhoto();
-        if(bitmap != null){
-            ivUser.setImageBitmap(bitmap);
-        }
 
+        SharedPreferences informacion = getContext().getSharedPreferences(GlobalVariables.Information, MODE_PRIVATE);
+        String name = informacion.getString(GlobalVariables.name, "None");
+        String email = informacion.getString(GlobalVariables.email, "None");
+        String nameexact = informacion.getString(GlobalVariables.nameexact, "None");
+        String photo = informacion.getString(GlobalVariables.photo, String.valueOf(0));
+
+
+
+        tvUserName.setText(nameexact);
+        tvGitUser.setText(name);
+        tvEmail.setText(email);
+
+
+        //cargar url de imagen
+        Glide.with(getActivity())
+                .load(photo)
+                .into(ivUser);
         return view;
     }
 
